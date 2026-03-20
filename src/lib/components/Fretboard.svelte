@@ -359,5 +359,6 @@
 		height: 1600px;
 		min-width: unset;
 		min-height: 560px;
+		margin: 0 auto;
 	}
 </style>

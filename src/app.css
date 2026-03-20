@@ -1,6 +1,6 @@
 @font-face {
-	font-family: 'Playfair Display';
-	src: url('/fonts/Playfair-VariableFont_opsz,wdth,wght.ttf') format('truetype');
+	font-family: 'Roboto';
+	src: url('/fonts/Roboto-VariableFont_wdth,wght.ttf') format('truetype');
 	font-weight: 100 900;
 	font-style: normal;
 	font-display: swap;
@@ -70,7 +70,7 @@
 
 	/* === Typography === */
 	--font-display: 'StoryScript', 'Inter', system-ui, -apple-system, sans-serif;
-	--font-body: 'Playfair Display', 'Inter', system-ui, -apple-system, sans-serif;
+	--font-body: 'Roboto', 'Inter', system-ui, -apple-system, sans-serif;
 	--font-mono: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
 
 	/* === Spacing === */
