@@ -124,7 +124,11 @@ export function getActivePositions(
 
 				case 'interval': {
 					const { intervalRoot, interval } = selection;
-					if (!intervalRoot || !interval) {
+					if (!intervalRoot) {
+						// No root selected yet — show all notes dim so user can tap one
+						return { ...pos, active: true, label: pos.note, role: '' };
+					}
+					if (!interval) {
 						return { ...pos, active: false, label: '', role: '' };
 					}
 

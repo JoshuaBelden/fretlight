@@ -10,6 +10,21 @@ class InstrumentState {
 	tuning = $state<TuningPreset>(GUITAR_STANDARD);
 	capoFret = $state(0);
 
+	constructor() {
+		try {
+			const savedInstrumentId = localStorage.getItem('instrumentId');
+			if (savedInstrumentId) {
+				const instr = ALL_INSTRUMENTS.find((i) => i.id === savedInstrumentId);
+				if (instr) this.instrument = instr;
+			}
+			const savedTuningId = localStorage.getItem('tuningId');
+			if (savedTuningId) {
+				const tuning = getTuningById(savedTuningId);
+				if (tuning) this.tuning = tuning;
+			}
+		} catch {}
+	}
+
 	get availableTunings(): TuningPreset[] {
 		return getTuningsForInstrument(this.instrument.id);
 	}
@@ -23,11 +38,18 @@ class InstrumentState {
 		if (defaultTuning) this.tuning = defaultTuning;
 		// Reset capo
 		this.capoFret = 0;
+		try {
+			localStorage.setItem('instrumentId', id);
+			localStorage.setItem('tuningId', instr.defaultTuningId);
+		} catch {}
 	}
 
 	setTuning(id: string) {
 		const t = getTuningById(id);
 		if (t) this.tuning = t;
+		try {
+			localStorage.setItem('tuningId', id);
+		} catch {}
 	}
 
 	setCapo(fret: number) {

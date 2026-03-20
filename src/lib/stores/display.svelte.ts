@@ -73,7 +73,6 @@ class DisplayState {
 
 	setInterval(interval: string | null) {
 		this.selectedInterval = interval;
-		this.intervalRoot = null; // reset root when interval changes
 	}
 
 	setIntervalRoot(note: string, stringIndex: number, fret: number) {
