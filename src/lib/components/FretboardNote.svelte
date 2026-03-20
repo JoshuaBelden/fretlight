@@ -52,7 +52,7 @@
 			dominant-baseline="middle"
 			font-size={fontSize}
 			font-weight="600"
-			font-family="var(--font-display)"
+			font-family="var(--font-body)"
 			fill={colors.text}
 			pointer-events="none"
 		>{pos.label}</text>

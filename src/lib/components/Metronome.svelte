@@ -243,7 +243,7 @@
 		flex: 1;
 		padding: var(--space-sm) var(--space-md);
 		border-radius: var(--radius-md);
-		font-family: var(--font-display);
+		font-family: var(--font-body);
 		font-size: 1rem;
 		font-weight: 600;
 		background: var(--color-amber);
@@ -269,7 +269,7 @@
 	.tap-btn {
 		padding: var(--space-sm) var(--space-md);
 		border-radius: var(--radius-md);
-		font-family: var(--font-display);
+		font-family: var(--font-body);
 		font-size: 0.9rem;
 		background: var(--color-bg-surface);
 		color: var(--color-text-secondary);

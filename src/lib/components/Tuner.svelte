@@ -193,7 +193,7 @@
 	}
 
 	.detected-note {
-		font-family: var(--font-display);
+		font-family: var(--font-body);
 		font-size: 4rem;
 		font-weight: 700;
 		line-height: 1;
@@ -217,7 +217,7 @@
 	}
 
 	.waiting {
-		font-family: var(--font-display);
+		font-family: var(--font-body);
 		font-size: 2rem;
 		color: var(--color-text-muted);
 	}
@@ -343,7 +343,7 @@
 	.tuner-btn {
 		padding: var(--space-sm) var(--space-md);
 		border-radius: var(--radius-md);
-		font-family: var(--font-display);
+		font-family: var(--font-body);
 		font-size: 1rem;
 		font-weight: 600;
 		background: var(--color-amber);

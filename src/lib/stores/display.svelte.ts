@@ -13,8 +13,14 @@ class DisplayState {
 	// Chord selection
 	selectedChord = $state<string | null>('major');
 
-	// Fretboard orientation
+	// Fretboard orientation (persisted to localStorage)
 	fretboardRotated = $state(false);
+
+	constructor() {
+		try {
+			this.fretboardRotated = localStorage.getItem('fretboardRotated') === 'true';
+		} catch {}
+	}
 
 	// Interval selection
 	selectedInterval = $state<string | null>(null);
@@ -64,6 +70,13 @@ class DisplayState {
 
 	setIntervalRoot(note: string, stringIndex: number, fret: number) {
 		this.intervalRoot = { note, stringIndex, fret };
+	}
+
+	toggleRotation() {
+		this.fretboardRotated = !this.fretboardRotated;
+		try {
+			localStorage.setItem('fretboardRotated', String(this.fretboardRotated));
+		} catch {}
 	}
 
 	clearIntervalRoot() {

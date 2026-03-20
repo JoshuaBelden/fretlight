@@ -98,7 +98,7 @@
 	.nav-tab {
 		padding: var(--space-xs) var(--space-md);
 		border-radius: var(--radius-sm);
-		font-family: var(--font-display);
+		font-family: var(--font-body);
 		font-size: 0.875rem;
 		color: var(--color-text-muted);
 		transition: color 0.15s, background 0.15s;
@@ -133,7 +133,7 @@
 		gap: var(--space-xs);
 		padding: var(--space-xs) var(--space-md);
 		border-radius: var(--radius-sm);
-		font-family: var(--font-display);
+		font-family: var(--font-body);
 		font-size: 0.875rem;
 		color: var(--color-text-secondary);
 		background: var(--color-bg-surface);
@@ -175,7 +175,7 @@
 		width: 100%;
 		text-align: left;
 		padding: var(--space-sm) var(--space-md);
-		font-family: var(--font-display);
+		font-family: var(--font-body);
 		font-size: 0.875rem;
 		color: var(--color-text-secondary);
 		background: none;

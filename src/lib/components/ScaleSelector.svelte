@@ -83,7 +83,7 @@
 	.scale-btn {
 		padding: 4px 6px;
 		border-radius: var(--radius-sm);
-		font-family: var(--font-display);
+		font-family: var(--font-body);
 		font-size: 0.72rem;
 		color: var(--color-text-muted);
 		background: var(--color-bg-surface);

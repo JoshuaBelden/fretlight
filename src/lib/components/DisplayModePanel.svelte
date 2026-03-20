@@ -42,7 +42,7 @@
 	.mode-btn {
 		padding: var(--space-xs) var(--space-sm);
 		border-radius: var(--radius-sm);
-		font-family: var(--font-display);
+		font-family: var(--font-body);
 		font-size: 0.8rem;
 		color: var(--color-text-muted);
 		background: var(--color-bg-surface);

@@ -61,7 +61,7 @@
 					<button
 						class="rotate-btn"
 						class:active={displayState.fretboardRotated}
-						onclick={() => (displayState.fretboardRotated = !displayState.fretboardRotated)}
+						onclick={() => displayState.toggleRotation()}
 						title="Rotate fretboard"
 					>
 						{displayState.fretboardRotated ? '↔' : '↕'} Rotate
@@ -139,7 +139,7 @@
 		flex: 1;
 		display: flex;
 		flex-direction: column;
-		justify-content: center;
+		justify-content: flex-start;
 		padding: var(--space-xl) var(--space-lg);
 		overflow: auto;
 		gap: var(--space-md);
@@ -155,7 +155,7 @@
 	.rotate-btn {
 		padding: var(--space-xs) var(--space-sm);
 		border-radius: var(--radius-sm);
-		font-family: var(--font-display);
+		font-family: var(--font-body);
 		font-size: 0.75rem;
 		color: var(--color-text-muted);
 		background: var(--color-bg-surface);
@@ -176,6 +176,10 @@
 
 	.fretboard-container {
 		width: 100%;
+		display: flex;
+		justify-content: center;
+		flex: 1;
+		min-height: 0;
 	}
 
 	.hint {

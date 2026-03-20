@@ -35,10 +35,11 @@
 	}
 
 	// stringY: in horizontal = Y; in rotated = X (same formula, axis swapped by caller)
-	function stringY(idx: number): number {
+	function stringY(idx: number, reverse = false): number {
 		const sc = instrumentState.instrument.stringCount;
 		const spacing = STRING_AREA_H / (sc - 1);
-		return TOP_PAD + idx * spacing;
+		const i = reverse ? sc - 1 - idx : idx;
+		return TOP_PAD + i * spacing;
 	}
 
 	function stringStrokeWidth(idx: number): number {
@@ -181,7 +182,7 @@
 					dominant-baseline="middle"
 					font-size="9"
 					fill="var(--color-amber)"
-					font-family="var(--font-display)"
+					font-family="var(--font-body)"
 				>capo {instrumentState.capoFret}</text>
 			{/if}
 
@@ -190,7 +191,7 @@
 				<FretboardString
 					{stringConfig}
 					positions={activePositions[idx] ?? []}
-					y={stringY(idx)}
+					y={stringY(idx, true)}
 					strokeWidth={stringStrokeWidth(idx)}
 					nutX={LEFT_PAD}
 					endX={VW - RIGHT_PAD}
@@ -275,7 +276,7 @@
 					text-anchor="middle"
 					font-size="9"
 					fill="var(--color-amber)"
-					font-family="var(--font-display)"
+					font-family="var(--font-body)"
 				>capo {instrumentState.capoFret}</text>
 			{/if}
 
@@ -312,7 +313,7 @@
 		overflow-x: hidden;
 		overflow-y: auto;
 		width: auto;
-		max-height: 600px;
+		flex: 1;
 	}
 
 	.fretboard-svg {
