@@ -5,6 +5,7 @@
 	import { buildFretboardNotes, getActivePositions } from '$lib/music/fretboard.js';
 	import FretboardString from './FretboardString.svelte';
 	import FretboardInlays from './FretboardInlays.svelte';
+	import { playNote } from '$lib/audio/notePlayer.js';
 
 	// ── Layout constants ──────────────────────────────────────
 	const VW = 1200;
@@ -72,12 +73,13 @@
 	// ── Click handler ─────────────────────────────────────────
 
 	function handleNoteClick(pos: FretPosition) {
+		playNote(pos.midi);
 		if (displayState.mode === 'interval') {
 			displayState.setIntervalRoot(pos.note, pos.stringIndex, pos.fret);
 		}
 	}
 
-	let isInteractive = $derived(displayState.mode === 'interval');
+	let isInteractive = true;
 </script>
 
 <div class="fretboard-wrap" class:rotated>
