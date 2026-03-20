@@ -6,60 +6,71 @@
 	font-display: swap;
 }
 
+@font-face {
+	font-family: 'StoryScript';
+	src: url('/fonts/StoryScript-Regular.ttf') format('truetype');
+	font-weight: 400;
+	font-style: normal;
+	font-display: swap;
+}
+
 /* ============================================================
-   CSS Custom Properties — Luthier Workshop Dark Theme
+   CSS Custom Properties — Modern Dark Theme
    ============================================================ */
 :root {
 	/* === Base Colors === */
-	--color-walnut-deep: #2a1200;
-	--color-walnut: #4a2200;
-	--color-walnut-light: #7a4a1e;
-	--color-amber: #c17d3c;
-	--color-amber-light: #d4a054;
-	--color-amber-dim: rgba(193, 125, 60, 0.35);
-	--color-cream: #f5e6c8;
-	--color-cream-dark: #d4c4a0;
-	--color-parchment: #e8d5b0;
+	--color-slate-deep: #090e1a;
+	--color-slate: #0d1520;
+	--color-slate-mid: #141e2e;
+	--color-blue: #3b82f6;
+	--color-blue-light: #60a5fa;
+	--color-blue-dim: rgba(59, 130, 246, 0.25);
+	--color-amber: #d97706;
+	--color-amber-light: #f59e0b;
+	--color-amber-dim: rgba(217, 119, 6, 0.25);
+	--color-white: #f1f5f9;
+	--color-white-dim: #94a3b8;
+	--color-silver: #cbd5e1;
 
 	/* === Semantic Colors === */
-	--color-bg: #140a02;
-	--color-bg-raised: #1e0f06;
-	--color-bg-surface: #261408;
-	--color-bg-hover: #2e1a0a;
-	--color-text-primary: var(--color-cream);
-	--color-text-secondary: var(--color-cream-dark);
-	--color-text-muted: #8b7355;
-	--color-accent: var(--color-amber);
-	--color-accent-hover: var(--color-amber-light);
-	--color-border: #3a2010;
-	--color-border-light: #4a3020;
+	--color-bg: #080d18;
+	--color-bg-raised: #0f1623;
+	--color-bg-surface: #141d2c;
+	--color-bg-hover: #1a2438;
+	--color-text-primary: var(--color-white);
+	--color-text-secondary: var(--color-silver);
+	--color-text-muted: #4a6080;
+	--color-accent: var(--color-blue);
+	--color-accent-hover: var(--color-blue-light);
+	--color-border: #1e2d42;
+	--color-border-light: #253448;
 
 	/* === Fretboard Colors === */
-	--fretboard-rosewood-dark: #2d0c06;
-	--fretboard-rosewood: #3d1008;
-	--fretboard-rosewood-light: #4d1a10;
-	--fret-metal: #b0b0b0;
-	--fret-metal-shine: #d0d0d0;
-	--nut-color: #f0e8d0;
-	--string-color: #d0c8b0;
-	--string-wound: #a09080;
-	--inlay-color: rgba(240, 235, 220, 0.55);
+	--fretboard-rosewood-dark: #0a0f1c;
+	--fretboard-rosewood: #111827;
+	--fretboard-rosewood-light: #1a2438;
+	--fret-metal: #8899aa;
+	--fret-metal-shine: #aabbcc;
+	--nut-color: #dde6f0;
+	--string-color: #8899aa;
+	--string-wound: #667788;
+	--inlay-color: rgba(148, 163, 184, 0.3);
 
 	/* === Note Display Colors === */
-	--note-root: var(--color-amber);
-	--note-root-text: var(--color-walnut-deep);
-	--note-scale-tone: var(--color-cream);
-	--note-scale-text: var(--color-walnut-deep);
-	--note-chord-tone: var(--color-amber-light);
-	--note-chord-text: var(--color-walnut-deep);
-	--note-interval: #7eb8da;
-	--note-interval-text: #0a2030;
-	--note-inactive: rgba(245, 230, 200, 0.12);
-	--note-inactive-text: rgba(245, 230, 200, 0.5);
+	--note-root: var(--color-blue);
+	--note-root-text: #ffffff;
+	--note-scale-tone: #93c5fd;
+	--note-scale-text: #0f172a;
+	--note-chord-tone: var(--color-blue-light);
+	--note-chord-text: var(--color-slate-deep);
+	--note-interval: #34d399;
+	--note-interval-text: #022c22;
+	--note-inactive: rgba(148, 163, 184, 0.08);
+	--note-inactive-text: rgba(148, 163, 184, 0.35);
 
 	/* === Typography === */
-	--font-display: 'Playfair Display', Georgia, serif;
-	--font-body: 'Playfair Display', Georgia, serif;
+	--font-display: 'StoryScript', 'Inter', system-ui, -apple-system, sans-serif;
+	--font-body: 'Inter', system-ui, -apple-system, sans-serif;
 	--font-mono: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
 
 	/* === Spacing === */
@@ -77,14 +88,14 @@
 	--radius-full: 9999px;
 
 	/* === Shadows === */
-	--shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.4);
-	--shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
-	--shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.6);
-	--shadow-amber: 0 0 12px rgba(193, 125, 60, 0.25);
+	--shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.5);
+	--shadow-md: 0 4px 12px rgba(0, 0, 0, 0.6);
+	--shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.7);
+	--shadow-blue: 0 0 16px rgba(59, 130, 246, 0.2);
 
 	/* === Layout === */
 	--sidebar-width: 280px;
-	--nav-height: 56px;
+	--nav-height: 72px;
 	--sidebar-width-lg: 300px;
 }
 
@@ -227,19 +238,7 @@ button {
    Utility Classes
    ============================================================ */
 .wood-texture {
-	background-image: repeating-linear-gradient(
-			87deg,
-			transparent,
-			transparent 3px,
-			rgba(0, 0, 0, 0.04) 3px,
-			rgba(0, 0, 0, 0.04) 6px
-		),
-		linear-gradient(
-			180deg,
-			var(--color-walnut-deep) 0%,
-			var(--color-walnut) 50%,
-			var(--color-walnut-deep) 100%
-		);
+	background: var(--color-bg-raised);
 }
 
 .panel {

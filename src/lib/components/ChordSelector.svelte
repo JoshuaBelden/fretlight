@@ -19,20 +19,16 @@
 	</div>
 
 	<div class="control-group">
-		<label class="label" for="chord-type">Chord Type</label>
-		<select
-			id="chord-type"
-			value={displayState.selectedChord ?? ''}
-			onchange={(e) => {
-				const v = (e.target as HTMLSelectElement).value;
-				displayState.setChord(v || null);
-			}}
-		>
-			<option value="">— select —</option>
+		<span class="label">Chord Type</span>
+		<div class="chord-type-grid">
 			{#each CHORD_TYPE_LIST as ct}
-				<option value={ct.id}>{ct.name} ({ct.symbol || 'maj'})</option>
+				<button
+					class="chord-btn"
+					class:active={displayState.selectedChord === ct.id}
+					onclick={() => displayState.setChord(displayState.selectedChord === ct.id ? null : ct.id)}
+				>{ct.name}</button>
 			{/each}
-		</select>
+		</div>
 	</div>
 </div>
 
@@ -47,10 +43,6 @@
 		display: flex;
 		flex-direction: column;
 		gap: 4px;
-	}
-
-	select {
-		width: 100%;
 	}
 
 	.note-grid {
@@ -77,8 +69,37 @@
 	}
 
 	.note-btn.active {
-		color: var(--note-root-text);
-		background: var(--note-root);
-		border-color: var(--note-root);
+		color: #fff;
+		background: var(--color-amber);
+		border-color: var(--color-amber);
+	}
+
+	.chord-type-grid {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 3px;
+	}
+
+	.chord-btn {
+		padding: 4px 6px;
+		border-radius: var(--radius-sm);
+		font-family: var(--font-display);
+		font-size: 0.72rem;
+		color: var(--color-text-muted);
+		background: var(--color-bg-surface);
+		border: 1px solid var(--color-border);
+		cursor: pointer;
+		transition: all 0.12s;
+		text-align: center;
+	}
+
+	.chord-btn:hover {
+		color: var(--color-text-primary);
+	}
+
+	.chord-btn.active {
+		color: #fff;
+		background: var(--color-amber);
+		border-color: var(--color-amber);
 	}
 </style>

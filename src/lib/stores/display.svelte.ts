@@ -7,11 +7,14 @@ class DisplayState {
 	activeView = $state<ActiveView>('fretboard');
 
 	// Scale selection
-	selectedRoot = $state<string | null>(null);
-	selectedScale = $state<string | null>(null);
+	selectedRoot = $state<string | null>('C');
+	selectedScale = $state<string | null>('major');
 
 	// Chord selection
-	selectedChord = $state<string | null>(null);
+	selectedChord = $state<string | null>('major');
+
+	// Fretboard orientation
+	fretboardRotated = $state(false);
 
 	// Interval selection
 	selectedInterval = $state<string | null>(null);

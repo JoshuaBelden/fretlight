@@ -72,7 +72,7 @@ export function getActivePositions(
 
 			switch (mode) {
 				case 'all-notes':
-					return { ...pos, active: true, label: pos.note, role: '' };
+					return { ...pos, active: true, label: pos.note, role: 'scale-tone' };
 
 				case 'scale': {
 					if (!selection.root || !selection.scale) {

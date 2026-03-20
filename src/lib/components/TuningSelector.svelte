@@ -1,21 +1,8 @@
 <script lang="ts">
-	import { instrumentState, ALL_INSTRUMENTS } from '$lib/stores/instrument.svelte.js';
+	import { instrumentState } from '$lib/stores/instrument.svelte.js';
 </script>
 
 <div class="tuning-selector">
-	<div class="control-group">
-		<label class="label" for="instrument-select">Instrument</label>
-		<select
-			id="instrument-select"
-			value={instrumentState.instrument.id}
-			onchange={(e) => instrumentState.setInstrument((e.target as HTMLSelectElement).value)}
-		>
-			{#each ALL_INSTRUMENTS as instr}
-				<option value={instr.id}>{instr.name}</option>
-			{/each}
-		</select>
-	</div>
-
 	<div class="control-group">
 		<label class="label" for="tuning-select">Tuning</label>
 		<select

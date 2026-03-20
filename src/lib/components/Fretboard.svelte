@@ -17,7 +17,9 @@
 	const STRING_AREA_H = VH - TOP_PAD - BOTTOM_PAD;
 	const NOTE_RADIUS = 11;
 
-	// ── Fret position math ────────────────────────────────────
+	// ── Fret position math (used for both orientations) ───────
+	// In horizontal mode: these return X coordinates
+	// In rotated mode: these same values are used as Y coordinates
 
 	function fretWireX(fret: number): number {
 		if (fret === 0) return LEFT_PAD;
@@ -32,6 +34,7 @@
 		return (fretWireX(fret - 1) + fretWireX(fret)) / 2;
 	}
 
+	// stringY: in horizontal = Y; in rotated = X (same formula, axis swapped by caller)
 	function stringY(idx: number): number {
 		const sc = instrumentState.instrument.stringCount;
 		const spacing = STRING_AREA_H / (sc - 1);
@@ -63,6 +66,8 @@
 		)
 	);
 
+	let rotated = $derived(displayState.fretboardRotated);
+
 	// ── Click handler ─────────────────────────────────────────
 
 	function handleNoteClick(pos: FretPosition) {
@@ -74,9 +79,9 @@
 	let isInteractive = $derived(displayState.mode === 'interval');
 </script>
 
-<div class="fretboard-wrap">
+<div class="fretboard-wrap" class:rotated>
 	<svg
-		viewBox="0 0 {VW} {VH}"
+		viewBox={rotated ? `0 0 ${VH} ${VW}` : `0 0 ${VW} ${VH}`}
 		xmlns="http://www.w3.org/2000/svg"
 		class="fretboard-svg"
 		aria-label="Guitar fretboard"
@@ -84,10 +89,10 @@
 	>
 		<defs>
 			<linearGradient id="rosewood" x1="0" y1="0" x2="0" y2="1">
-				<stop offset="0%" stop-color="#4a1510" />
-				<stop offset="40%" stop-color="#3d1008" />
-				<stop offset="60%" stop-color="#3a0e06" />
-				<stop offset="100%" stop-color="#4a1510" />
+				<stop offset="0%" stop-color="#2d1a08" />
+				<stop offset="40%" stop-color="#221208" />
+				<stop offset="60%" stop-color="#1e1006" />
+				<stop offset="100%" stop-color="#2d1a08" />
 			</linearGradient>
 			<!-- Subtle wood grain overlay -->
 			<filter id="grain" x="0%" y="0%" width="100%" height="100%">
@@ -101,97 +106,196 @@
 			</filter>
 		</defs>
 
-		<!-- ── Fretboard body ── -->
-		<rect
-			x={LEFT_PAD}
-			y={TOP_PAD - 6}
-			width={FRET_AREA_W}
-			height={STRING_AREA_H + 12}
-			fill="url(#rosewood)"
-			rx="3"
-		/>
-
-		<!-- ── Fret number labels ── -->
-		{#each fretNumbers as fretNum}
-			<text
-				x={noteCenterX(fretNum)}
-				y={TOP_PAD - 10}
-				text-anchor="middle"
-				font-size="10"
-				fill="var(--color-text-muted)"
-				font-family="var(--font-mono)"
-			>{fretNum}</text>
-		{/each}
-
-		<!-- ── Dot inlays ── -->
-		<FretboardInlays
-			inlayFrets={instrumentState.instrument.inlayFrets}
-			doubleInlayFrets={instrumentState.instrument.doubleInlayFrets}
-			{noteCenterX}
-			topY={TOP_PAD - 6}
-			bottomY={TOP_PAD + STRING_AREA_H + 6}
-		/>
-
-		<!-- ── Nut ── -->
-		<rect
-			x={LEFT_PAD - 5}
-			y={TOP_PAD - 6}
-			width="8"
-			height={STRING_AREA_H + 12}
-			fill="var(--nut-color)"
-			rx="2"
-		/>
-
-		<!-- ── Fret wires ── -->
-		{#each Array.from({ length: instrumentState.instrument.fretCount }, (_, i) => i + 1) as fret}
-			<line
-				x1={fretWireX(fret)}
-				y1={TOP_PAD - 6}
-				x2={fretWireX(fret)}
-				y2={TOP_PAD + STRING_AREA_H + 6}
-				stroke="var(--fret-metal)"
-				stroke-width={fret === 12 ? 2 : 1.2}
-			/>
-		{/each}
-
-		<!-- ── Capo indicator ── -->
-		{#if instrumentState.capoFret > 0}
+		{#if rotated}
+			<!-- ── Fretboard body (rotated) ── -->
 			<rect
-				x={fretWireX(instrumentState.capoFret - 1) + 3}
-				y={TOP_PAD - 6}
-				width={fretWireX(instrumentState.capoFret) - fretWireX(instrumentState.capoFret - 1) - 6}
-				height={STRING_AREA_H + 12}
-				fill="rgba(193, 125, 60, 0.15)"
-				stroke="var(--color-amber)"
-				stroke-width="1.5"
+				x={TOP_PAD - 6}
+				y={LEFT_PAD}
+				width={STRING_AREA_H + 12}
+				height={FRET_AREA_W}
+				fill="url(#rosewood)"
 				rx="3"
 			/>
-			<text
-				x={(fretWireX(instrumentState.capoFret - 1) + fretWireX(instrumentState.capoFret)) / 2}
-				y={TOP_PAD + STRING_AREA_H + 18}
-				text-anchor="middle"
-				font-size="9"
-				fill="var(--color-amber)"
-				font-family="var(--font-display)"
-			>capo {instrumentState.capoFret}</text>
-		{/if}
 
-		<!-- ── Strings and notes ── -->
-		{#each instrumentState.tuning.strings as stringConfig, idx}
-			<FretboardString
-				{stringConfig}
-				positions={activePositions[idx] ?? []}
-				y={stringY(idx)}
-				strokeWidth={stringStrokeWidth(idx)}
-				nutX={LEFT_PAD}
-				endX={VW - RIGHT_PAD}
+			<!-- ── Fret number labels (left side) ── -->
+			{#each fretNumbers as fretNum}
+				<text
+					x={TOP_PAD - 10}
+					y={noteCenterX(fretNum)}
+					text-anchor="end"
+					dominant-baseline="middle"
+					font-size="10"
+					fill="var(--color-text-muted)"
+					font-family="var(--font-mono)"
+				>{fretNum}</text>
+			{/each}
+
+			<!-- ── Dot inlays (rotated) ── -->
+			<FretboardInlays
+				inlayFrets={instrumentState.instrument.inlayFrets}
+				doubleInlayFrets={instrumentState.instrument.doubleInlayFrets}
 				{noteCenterX}
-				{fretWireX}
-				noteRadius={NOTE_RADIUS}
-				interactive={isInteractive}
-				onNoteClick={handleNoteClick}
+				topY={TOP_PAD - 6}
+				bottomY={TOP_PAD + STRING_AREA_H + 6}
+				rotated={true}
 			/>
-		{/each}
+
+			<!-- ── Nut (horizontal bar at top) ── -->
+			<rect
+				x={TOP_PAD - 6}
+				y={LEFT_PAD - 5}
+				width={STRING_AREA_H + 12}
+				height="8"
+				fill="var(--nut-color)"
+				rx="2"
+			/>
+
+			<!-- ── Fret wires (horizontal) ── -->
+			{#each Array.from({ length: instrumentState.instrument.fretCount }, (_, i) => i + 1) as fret}
+				<line
+					x1={TOP_PAD - 6}
+					y1={fretWireX(fret)}
+					x2={TOP_PAD + STRING_AREA_H + 6}
+					y2={fretWireX(fret)}
+					stroke="var(--fret-metal)"
+					stroke-width={fret === 12 ? 2 : 1.2}
+				/>
+			{/each}
+
+			<!-- ── Capo indicator (rotated) ── -->
+			{#if instrumentState.capoFret > 0}
+				<rect
+					x={TOP_PAD - 6}
+					y={fretWireX(instrumentState.capoFret - 1) + 3}
+					width={STRING_AREA_H + 12}
+					height={fretWireX(instrumentState.capoFret) - fretWireX(instrumentState.capoFret - 1) - 6}
+					fill="rgba(193, 125, 60, 0.15)"
+					stroke="var(--color-amber)"
+					stroke-width="1.5"
+					rx="3"
+				/>
+				<text
+					x={TOP_PAD + STRING_AREA_H + 18}
+					y={(fretWireX(instrumentState.capoFret - 1) + fretWireX(instrumentState.capoFret)) / 2}
+					text-anchor="start"
+					dominant-baseline="middle"
+					font-size="9"
+					fill="var(--color-amber)"
+					font-family="var(--font-display)"
+				>capo {instrumentState.capoFret}</text>
+			{/if}
+
+			<!-- ── Strings and notes (rotated) ── -->
+			{#each instrumentState.tuning.strings as stringConfig, idx}
+				<FretboardString
+					{stringConfig}
+					positions={activePositions[idx] ?? []}
+					y={stringY(idx)}
+					strokeWidth={stringStrokeWidth(idx)}
+					nutX={LEFT_PAD}
+					endX={VW - RIGHT_PAD}
+					{noteCenterX}
+					{fretWireX}
+					noteRadius={NOTE_RADIUS}
+					interactive={isInteractive}
+					onNoteClick={handleNoteClick}
+					rotated={true}
+				/>
+			{/each}
+
+		{:else}
+			<!-- ── Fretboard body ── -->
+			<rect
+				x={LEFT_PAD}
+				y={TOP_PAD - 6}
+				width={FRET_AREA_W}
+				height={STRING_AREA_H + 12}
+				fill="url(#rosewood)"
+				rx="3"
+			/>
+
+			<!-- ── Fret number labels ── -->
+			{#each fretNumbers as fretNum}
+				<text
+					x={noteCenterX(fretNum)}
+					y={TOP_PAD - 10}
+					text-anchor="middle"
+					font-size="10"
+					fill="var(--color-text-muted)"
+					font-family="var(--font-mono)"
+				>{fretNum}</text>
+			{/each}
+
+			<!-- ── Dot inlays ── -->
+			<FretboardInlays
+				inlayFrets={instrumentState.instrument.inlayFrets}
+				doubleInlayFrets={instrumentState.instrument.doubleInlayFrets}
+				{noteCenterX}
+				topY={TOP_PAD - 6}
+				bottomY={TOP_PAD + STRING_AREA_H + 6}
+			/>
+
+			<!-- ── Nut ── -->
+			<rect
+				x={LEFT_PAD - 5}
+				y={TOP_PAD - 6}
+				width="8"
+				height={STRING_AREA_H + 12}
+				fill="var(--nut-color)"
+				rx="2"
+			/>
+
+			<!-- ── Fret wires ── -->
+			{#each Array.from({ length: instrumentState.instrument.fretCount }, (_, i) => i + 1) as fret}
+				<line
+					x1={fretWireX(fret)}
+					y1={TOP_PAD - 6}
+					x2={fretWireX(fret)}
+					y2={TOP_PAD + STRING_AREA_H + 6}
+					stroke="var(--fret-metal)"
+					stroke-width={fret === 12 ? 2 : 1.2}
+				/>
+			{/each}
+
+			<!-- ── Capo indicator ── -->
+			{#if instrumentState.capoFret > 0}
+				<rect
+					x={fretWireX(instrumentState.capoFret - 1) + 3}
+					y={TOP_PAD - 6}
+					width={fretWireX(instrumentState.capoFret) - fretWireX(instrumentState.capoFret - 1) - 6}
+					height={STRING_AREA_H + 12}
+					fill="rgba(193, 125, 60, 0.15)"
+					stroke="var(--color-amber)"
+					stroke-width="1.5"
+					rx="3"
+				/>
+				<text
+					x={(fretWireX(instrumentState.capoFret - 1) + fretWireX(instrumentState.capoFret)) / 2}
+					y={TOP_PAD + STRING_AREA_H + 18}
+					text-anchor="middle"
+					font-size="9"
+					fill="var(--color-amber)"
+					font-family="var(--font-display)"
+				>capo {instrumentState.capoFret}</text>
+			{/if}
+
+			<!-- ── Strings and notes ── -->
+			{#each instrumentState.tuning.strings as stringConfig, idx}
+				<FretboardString
+					{stringConfig}
+					positions={activePositions[idx] ?? []}
+					y={stringY(idx)}
+					strokeWidth={stringStrokeWidth(idx)}
+					nutX={LEFT_PAD}
+					endX={VW - RIGHT_PAD}
+					{noteCenterX}
+					{fretWireX}
+					noteRadius={NOTE_RADIUS}
+					interactive={isInteractive}
+					onNoteClick={handleNoteClick}
+				/>
+			{/each}
+		{/if}
 	</svg>
 </div>
 
@@ -199,14 +303,29 @@
 	.fretboard-wrap {
 		width: 100%;
 		overflow-x: auto;
+		overflow-y: hidden;
 		-webkit-overflow-scrolling: touch;
 		border-radius: var(--radius-md);
 	}
 
+	.fretboard-wrap.rotated {
+		overflow-x: hidden;
+		overflow-y: auto;
+		width: auto;
+		max-height: 600px;
+	}
+
 	.fretboard-svg {
-		width: 100%;
+		width: 1600px;
 		height: auto;
-		min-width: 560px;
+		min-width: 1600px;
 		display: block;
+	}
+
+	.fretboard-wrap.rotated .fretboard-svg {
+		width: auto;
+		height: 1600px;
+		min-width: unset;
+		min-height: 560px;
 	}
 </style>

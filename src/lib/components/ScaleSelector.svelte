@@ -6,7 +6,7 @@
 
 <div class="scale-selector">
 	<div class="control-group">
-		<label class="label" for="scale-root">Root Note</label>
+		<span class="label">Root Note</span>
 		<div class="note-grid">
 			{#each NOTE_NAMES as note}
 				<button
@@ -19,20 +19,16 @@
 	</div>
 
 	<div class="control-group">
-		<label class="label" for="scale-type">Scale</label>
-		<select
-			id="scale-type"
-			value={displayState.selectedScale ?? ''}
-			onchange={(e) => {
-				const v = (e.target as HTMLSelectElement).value;
-				displayState.setScale(v || null);
-			}}
-		>
-			<option value="">— select —</option>
+		<span class="label">Scale</span>
+		<div class="scale-type-grid">
 			{#each SCALE_LIST as scale}
-				<option value={scale.id}>{scale.name}</option>
+				<button
+					class="scale-btn"
+					class:active={displayState.selectedScale === scale.id}
+					onclick={() => displayState.setScale(displayState.selectedScale === scale.id ? null : scale.id)}
+				>{scale.name}</button>
 			{/each}
-		</select>
+		</div>
 	</div>
 </div>
 
@@ -47,10 +43,6 @@
 		display: flex;
 		flex-direction: column;
 		gap: 4px;
-	}
-
-	select {
-		width: 100%;
 	}
 
 	.note-grid {
@@ -77,8 +69,37 @@
 	}
 
 	.note-btn.active {
-		color: var(--note-root-text);
-		background: var(--note-root);
-		border-color: var(--note-root);
+		color: #fff;
+		background: var(--color-amber);
+		border-color: var(--color-amber);
+	}
+
+	.scale-type-grid {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 3px;
+	}
+
+	.scale-btn {
+		padding: 4px 6px;
+		border-radius: var(--radius-sm);
+		font-family: var(--font-display);
+		font-size: 0.72rem;
+		color: var(--color-text-muted);
+		background: var(--color-bg-surface);
+		border: 1px solid var(--color-border);
+		cursor: pointer;
+		transition: all 0.12s;
+		text-align: center;
+	}
+
+	.scale-btn:hover {
+		color: var(--color-text-primary);
+	}
+
+	.scale-btn.active {
+		color: #fff;
+		background: var(--color-amber);
+		border-color: var(--color-amber);
 	}
 </style>

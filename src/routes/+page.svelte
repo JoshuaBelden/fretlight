@@ -57,6 +57,16 @@
 
 			<!-- Main fretboard area -->
 			<main class="fretboard-main">
+				<div class="fretboard-toolbar">
+					<button
+						class="rotate-btn"
+						class:active={displayState.fretboardRotated}
+						onclick={() => (displayState.fretboardRotated = !displayState.fretboardRotated)}
+						title="Rotate fretboard"
+					>
+						{displayState.fretboardRotated ? '↔' : '↕'} Rotate
+					</button>
+				</div>
 				<div class="fretboard-container">
 					<Fretboard />
 				</div>
@@ -131,9 +141,37 @@
 		flex-direction: column;
 		justify-content: center;
 		padding: var(--space-xl) var(--space-lg);
-		overflow: hidden;
+		overflow: auto;
 		gap: var(--space-md);
 		min-width: 0;
+	}
+
+	.fretboard-toolbar {
+		display: flex;
+		justify-content: flex-end;
+		gap: var(--space-sm);
+	}
+
+	.rotate-btn {
+		padding: var(--space-xs) var(--space-sm);
+		border-radius: var(--radius-sm);
+		font-family: var(--font-display);
+		font-size: 0.75rem;
+		color: var(--color-text-muted);
+		background: var(--color-bg-surface);
+		border: 1px solid var(--color-border);
+		cursor: pointer;
+		transition: color 0.15s, border-color 0.15s;
+	}
+
+	.rotate-btn:hover {
+		color: var(--color-text-primary);
+		border-color: var(--color-border-light);
+	}
+
+	.rotate-btn.active {
+		color: var(--color-amber);
+		border-color: var(--color-amber);
 	}
 
 	.fretboard-container {
