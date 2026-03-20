@@ -64,7 +64,7 @@
 
 	<!-- Notes along this string -->
 	{#each positions as pos, fret}
-		{#if pos !== null}
+		{#if pos !== null && pos.active}
 			{@const cy = fret === 0 ? openNoteX : noteCenterX(fret)}
 			<FretboardNote
 				{pos}
@@ -101,7 +101,7 @@
 
 	<!-- Notes along this string -->
 	{#each positions as pos, fret}
-		{#if pos !== null}
+		{#if pos !== null && pos.active}
 			{@const cx = fret === 0 ? openNoteX : noteCenterX(fret)}
 			<FretboardNote
 				{pos}

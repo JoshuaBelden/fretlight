@@ -12,6 +12,7 @@ class DisplayState {
 
 	// Chord selection
 	selectedChord = $state<string | null>('major');
+	selectedChordPosition = $state<number | null>(null);
 
 	// Fretboard orientation (persisted to localStorage)
 	fretboardRotated = $state(false);
@@ -32,7 +33,9 @@ class DisplayState {
 			scale: this.selectedScale,
 			chord: this.selectedChord,
 			interval: this.selectedInterval,
-			intervalRoot: this.intervalRoot
+			intervalRoot: this.intervalRoot,
+			chordPosition: this.selectedChordPosition,
+			resolvedVoicing: null // populated by Fretboard component
 		};
 	}
 
@@ -61,6 +64,11 @@ class DisplayState {
 
 	setChord(chord: string | null) {
 		this.selectedChord = chord;
+		this.selectedChordPosition = null;
+	}
+
+	setChordPosition(position: number | null) {
+		this.selectedChordPosition = position;
 	}
 
 	setInterval(interval: string | null) {

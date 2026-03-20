@@ -93,6 +93,24 @@ export function getActivePositions(
 					if (!selection.root || !selection.chord) {
 						return { ...pos, active: false, label: '', role: '' };
 					}
+
+					// If a specific voicing is selected, only show those exact string/fret positions
+					if (selection.resolvedVoicing) {
+						const voicingFret = selection.resolvedVoicing[pos.stringIndex];
+						if (voicingFret === null || voicingFret === undefined) {
+							return { ...pos, active: false, label: '', role: '' };
+						}
+						const isMatch = pos.fret === voicingFret;
+						const isRoot = notesMatch(pos.note, selection.root);
+						return {
+							...pos,
+							active: isMatch,
+							label: isMatch ? pos.note : '',
+							role: isRoot ? 'root' : isMatch ? 'chord-tone' : ''
+						};
+					}
+
+					// Default: highlight all chord tones across the neck
 					const chordNotes = getChordNotes(selection.root, selection.chord);
 					const inChord = isNoteInChord(pos.note, chordNotes);
 					const isRoot = notesMatch(pos.note, selection.root);

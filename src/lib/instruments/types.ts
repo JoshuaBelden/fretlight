@@ -60,6 +60,10 @@ export interface DisplaySelection {
 	chord: string | null;
 	interval: string | null;
 	intervalRoot: { note: string; stringIndex: number; fret: number } | null;
+	/** Index of the selected chord position, null = show all chord tones */
+	chordPosition: number | null;
+	/** Resolved absolute frets for the selected voicing, null = no voicing filter */
+	resolvedVoicing: (number | null)[] | null;
 }
 
 export interface IntervalDefinition {
@@ -78,4 +82,27 @@ export interface ChordTypeDefinition {
 	id: string;
 	name: string;
 	symbol: string;
+}
+
+export interface ChordShape {
+	/** Display name, e.g. "E Shape", "A Shape" */
+	name: string;
+	/** Per-string fret offset from baseFret; null = muted/not played.
+	 *  Index matches tuning.strings[] order (0 = topmost displayed string). */
+	frets: (number | null)[];
+	/** Which string (tuning.strings index) holds the root note */
+	rootStringIndex: number;
+	/** The root note's fret offset within the shape (relative to baseFret) */
+	rootFretOffset: number;
+}
+
+export interface ResolvedPosition {
+	/** Index of the shape that produced this position */
+	shapeIndex: number;
+	/** Shape name for display */
+	shapeName: string;
+	/** The lowest fret offset applied to the shape */
+	baseFret: number;
+	/** Absolute fret per string (null = muted) */
+	actualFrets: (number | null)[];
 }

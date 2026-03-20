@@ -1,8 +1,9 @@
 <script lang="ts">
-	import type { FretPosition } from '$lib/instruments/types.js';
+	import type { FretPosition, ResolvedPosition } from '$lib/instruments/types.js';
 	import { instrumentState } from '$lib/stores/instrument.svelte.js';
 	import { displayState } from '$lib/stores/display.svelte.js';
 	import { buildFretboardNotes, getActivePositions } from '$lib/music/fretboard.js';
+	import { resolveChordPositions } from '$lib/music/chord-shapes.js';
 	import FretboardString from './FretboardString.svelte';
 	import FretboardInlays from './FretboardInlays.svelte';
 	import { playNote } from '$lib/audio/notePlayer.js';
@@ -58,8 +59,36 @@
 		)
 	);
 
+	// Resolve available chord positions for the current root + chord type
+	let chordPositions: ResolvedPosition[] = $derived(
+		displayState.mode === 'chord' && displayState.selectedRoot && displayState.selectedChord
+			? resolveChordPositions(
+					displayState.selectedRoot,
+					displayState.selectedChord,
+					instrumentState.tuning,
+					instrumentState.instrument.fretCount
+				)
+			: []
+	);
+
+	// Build effective selection with resolved voicing data
+	// chordPosition stores a shapeIndex, so find the first resolved position matching it
+	let effectiveSelection = $derived.by(() => {
+		const base = displayState.selection;
+		if (base.chordPosition !== null && base.chordPosition !== undefined) {
+			const match = chordPositions.find((p) => p.shapeIndex === base.chordPosition);
+			if (match) {
+				return {
+					...base,
+					resolvedVoicing: match.actualFrets
+				};
+			}
+		}
+		return base;
+	});
+
 	let activePositions = $derived(
-		getActivePositions(allPositions, displayState.mode, displayState.selection)
+		getActivePositions(allPositions, displayState.mode, effectiveSelection)
 	);
 
 	let fretNumbers = $derived(
