@@ -18,7 +18,7 @@
 
 	<!-- Open string notes preview — drone string shown first, in lowercase -->
 	<div class="string-preview">
-		{#each [...instrumentState.tuning.strings].sort((a, b) => (b.startFret > 0 ? 1 : 0) - (a.startFret > 0 ? 1 : 0)) as s}
+		{#each [...instrumentState.tuning.strings].sort((a, b) => b.stringNumber - a.stringNumber) as s}
 			{@const name = s.openNote.replace(/\d/, '')}
 			<span class="string-note" class:drone={s.startFret > 0}>
 				{s.startFret > 0 ? name.toLowerCase() : name}

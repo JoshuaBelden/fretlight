@@ -211,8 +211,40 @@ const HALF_DIM_SHAPES: ChordShape[] = [
 ];
 
 // ============================================================
+// Banjo Chord Shape Definitions
+// ============================================================
+// 5-string banjo: strings ordered [1(D4), 2(B3), 3(G3), 4(D3), 5(G4 drone)]
+// frets[] has 5 entries matching banjo string count; null = not played
+
+// --- Banjo Major ---
+const BANJO_MAJOR_SHAPES: ChordShape[] = [
+	{
+		name: 'G Shape',
+		frets: [0, 0, 0, 0, null],
+		rootStringIndex: 2,
+		rootFretOffset: 0
+	},
+	{
+		name: 'C Shape',
+		frets: [2, 1, 0, 2, null],
+		rootStringIndex: 1,
+		rootFretOffset: 1
+	},
+	{
+		name: 'D Shape',
+		frets: [4, 3, 2, 0, null],
+		rootStringIndex: 3,
+		rootFretOffset: 0
+	}
+];
+
+// ============================================================
 // Shape Lookup
 // ============================================================
+
+const BANJO_SHAPE_MAP: Record<string, ChordShape[]> = {
+	major: BANJO_MAJOR_SHAPES
+};
 
 const SHAPE_MAP: Record<string, ChordShape[]> = {
 	major: MAJOR_SHAPES,
@@ -230,9 +262,12 @@ const SHAPE_MAP: Record<string, ChordShape[]> = {
 
 /**
  * Get the defined chord shapes for a given chord quality.
- * Returns an empty array for unrecognized qualities or non-guitar instruments.
+ * Returns an empty array for unrecognized qualities.
  */
-export function getChordShapes(chordQuality: string): ChordShape[] {
+export function getChordShapes(chordQuality: string, instrumentId?: string): ChordShape[] {
+	if (instrumentId === 'banjo') {
+		return BANJO_SHAPE_MAP[chordQuality] ?? [];
+	}
 	return SHAPE_MAP[chordQuality] ?? [];
 }
 
@@ -277,7 +312,7 @@ export function resolveChordPositions(
 	tuning: TuningPreset,
 	fretCount: number
 ): ResolvedPosition[] {
-	const shapes = getChordShapes(chordQuality);
+	const shapes = getChordShapes(chordQuality, tuning.instrumentId);
 	if (shapes.length === 0) return [];
 
 	const positions: ResolvedPosition[] = [];
