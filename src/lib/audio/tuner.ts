@@ -18,6 +18,7 @@ type PitchCallback = (data: {
 export class PitchDetector {
 	private audioCtx: AudioContext | null = null;
 	private analyser: AnalyserNode | null = null;
+	private source: MediaStreamAudioSourceNode | null = null;
 	private stream: MediaStream | null = null;
 	private rafId: number | null = null;
 	private buffer: Float32Array<ArrayBuffer> | null = null;
@@ -51,8 +52,8 @@ export class PitchDetector {
 		this.analyser.smoothingTimeConstant = 0.0;
 		this.buffer = new Float32Array(this.analyser.fftSize) as Float32Array<ArrayBuffer>;
 
-		const source = this.audioCtx.createMediaStreamSource(this.stream);
-		source.connect(this.analyser);
+		this.source = this.audioCtx.createMediaStreamSource(this.stream);
+		this.source.connect(this.analyser);
 
 		this.isActive = true;
 		this.smoothingBuffer = [];
@@ -71,6 +72,8 @@ export class PitchDetector {
 		this.stream?.getTracks().forEach((t) => t.stop());
 		this.stream = null;
 
+		this.source?.disconnect();
+		this.source = null;
 		this.analyser?.disconnect();
 		this.audioCtx?.close();
 		this.audioCtx = null;
@@ -125,7 +128,7 @@ export class PitchDetector {
 		let rms = 0;
 		for (let i = 0; i < bufLen; i++) rms += buffer[i] * buffer[i];
 		rms = Math.sqrt(rms / bufLen);
-		if (rms < 0.01) return null;
+		if (rms < 0.0002) return null;
 
 		// Find the first zero-crossing going downward (trim leading silence)
 		let r1 = 0;

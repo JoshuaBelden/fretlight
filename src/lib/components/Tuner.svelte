@@ -3,6 +3,7 @@
 	import { audioState } from '$lib/stores/audio.svelte.js';
 	import { instrumentState } from '$lib/stores/instrument.svelte.js';
 	import { PitchDetector } from '$lib/audio/tuner.js';
+	import { playNote } from '$lib/audio/notePlayer.js';
 
 	const detector = new PitchDetector();
 
@@ -32,13 +33,13 @@
 		}
 	}
 
-	// Cents gauge: map -50..+50 to needle rotation -45..+45 degrees
-	let needleAngle = $derived(
-		Math.max(-45, Math.min(45, (audioState.tunerCentsDeviation / 50) * 45))
+	// Meter position: map -50..+50 cents to 0..100%
+	let meterPercent = $derived(
+		Math.max(0, Math.min(100, ((audioState.tunerCentsDeviation + 50) / 100) * 100))
 	);
 
 	// Color: green when in tune (|cents| < 5), yellow (5-15), red (>15)
-	let tuneColor = $derived(() => {
+	let tuneColor = $derived.by(() => {
 		const abs = Math.abs(audioState.tunerCentsDeviation);
 		if (!audioState.tunerDetectedNote) return 'var(--color-text-muted)';
 		if (abs <= 5) return '#5cb85c';
@@ -47,7 +48,7 @@
 	});
 
 	// Which target string is closest to the detected pitch?
-	let closestString = $derived(() => {
+	let closestString = $derived.by(() => {
 		if (!audioState.tunerDetectedNote || !audioState.tunerDetectedOctave) return null;
 		const detectedMidi =
 			audioState.tunerDetectedNote && audioState.tunerDetectedOctave !== null
@@ -68,6 +69,9 @@
 		return closest;
 	});
 
+	// Strings reversed so low E is first
+	let stringsLowToHigh = $derived([...instrumentState.tuning.strings].reverse());
+
 	function noteToMidi(note: string, octave: number): number {
 		const chromaMap: Record<string, number> = {
 			C: 0, 'C#': 1, Db: 1, D: 2, 'D#': 3, Eb: 3, E: 4, F: 5,
@@ -86,6 +90,11 @@
 		return openNote.replace(/\d/, '');
 	}
 
+	function playOpenString(openNote: string) {
+		const midi = openNoteMidi(openNote);
+		if (midi > 0) playNote(midi);
+	}
+
 	onDestroy(() => detector.destroy());
 </script>
 
@@ -97,7 +106,7 @@
 	<!-- Main display -->
 	<div class="note-display">
 		{#if audioState.tunerDetectedNote}
-			<span class="detected-note" style="color: {tuneColor()}">
+			<span class="detected-note" style="color: {tuneColor}">
 				{audioState.tunerDetectedNote}
 			</span>
 			<span class="detected-octave">{audioState.tunerDetectedOctave}</span>
@@ -113,24 +122,26 @@
 		{/if}
 	</div>
 
-	<!-- Cents gauge -->
-	<div class="gauge-container">
-		<div class="gauge-labels">
+	<!-- Cents meter -->
+	<div class="meter-container">
+		<div class="meter-labels">
 			<span>-50</span>
 			<span>-25</span>
-			<span class="center-label">♦</span>
+			<span class="center-label">0</span>
 			<span>+25</span>
 			<span>+50</span>
 		</div>
-		<div class="gauge-track">
-			<div class="gauge-center-mark"></div>
-			<div
-				class="gauge-needle"
-				style="transform: rotate({needleAngle}deg); background: {tuneColor()}"
-			></div>
+		<div class="meter-track">
+			<div class="meter-center-mark"></div>
+			{#if audioState.tunerDetectedNote}
+				<div
+					class="meter-indicator"
+					style="left: {meterPercent}%; background: {tuneColor}"
+				></div>
+			{/if}
 		</div>
 		{#if audioState.tunerDetectedNote}
-			<p class="cents-label" style="color: {tuneColor()}">
+			<p class="cents-label" style="color: {tuneColor}">
 				{audioState.tunerCentsDeviation > 0 ? '+' : ''}{audioState.tunerCentsDeviation} cents
 			</p>
 		{/if}
@@ -140,15 +151,18 @@
 	<div class="target-strings">
 		<span class="label">Target Notes — {instrumentState.tuning.name}</span>
 		<div class="string-list">
-			{#each instrumentState.tuning.strings as s}
-				{@const isClosest = closestString() === s}
-				<div class="target-string" class:closest={isClosest && !!audioState.tunerDetectedNote}>
-					<span class="string-num">Str {s.stringNumber}</span>
+			{#each stringsLowToHigh as s}
+				{@const isClosest = closestString === s}
+				<button
+					class="target-string"
+					class:closest={isClosest && !!audioState.tunerDetectedNote}
+					onclick={() => playOpenString(s.openNote)}
+				>
 					<span class="string-note-name">{openNoteName(s.openNote)}</span>
 					{#if s.startFret > 0}
 						<span class="drone-badge">drone</span>
 					{/if}
-				</div>
+				</button>
 			{/each}
 		</div>
 	</div>
@@ -163,7 +177,7 @@
 		class:active={audioState.tunerIsActive}
 		onclick={toggleTuner}
 	>
-		{audioState.tunerIsActive ? '■ Stop Tuner' : '🎙 Start Tuner'}
+		{audioState.tunerIsActive ? 'Stop Listening' : 'Start Listening'}
 	</button>
 </div>
 
@@ -222,15 +236,15 @@
 		color: var(--color-text-muted);
 	}
 
-	/* Cents gauge */
-	.gauge-container {
+	/* Cents meter */
+	.meter-container {
 		display: flex;
 		flex-direction: column;
 		gap: 6px;
 		align-items: center;
 	}
 
-	.gauge-labels {
+	.meter-labels {
 		display: flex;
 		justify-content: space-between;
 		width: 100%;
@@ -243,34 +257,34 @@
 		color: var(--color-amber);
 	}
 
-	.gauge-track {
+	.meter-track {
 		position: relative;
 		width: 100%;
 		height: 6px;
 		background: var(--color-bg-surface);
 		border-radius: var(--radius-full);
 		border: 1px solid var(--color-border);
-		display: flex;
-		align-items: center;
-		justify-content: center;
 	}
 
-	.gauge-center-mark {
+	.meter-center-mark {
 		position: absolute;
+		left: 50%;
+		top: -4px;
 		width: 2px;
 		height: 14px;
 		background: var(--color-amber);
 		border-radius: 1px;
+		transform: translateX(-50%);
 	}
 
-	.gauge-needle {
+	.meter-indicator {
 		position: absolute;
-		width: 3px;
-		height: 20px;
-		border-radius: 2px;
-		transform-origin: bottom center;
-		bottom: -3px;
-		transition: transform 0.08s ease-out, background 0.15s;
+		top: -5px;
+		width: 10px;
+		height: 16px;
+		border-radius: 3px;
+		transform: translateX(-50%);
+		transition: left 0.08s ease-out, background 0.15s;
 	}
 
 	.cents-label {
@@ -300,18 +314,18 @@
 		background: var(--color-bg-surface);
 		border: 1px solid var(--color-border);
 		border-radius: var(--radius-sm);
+		cursor: pointer;
 		transition: border-color 0.15s, background 0.15s;
+		font-family: inherit;
+	}
+
+	.target-string:hover {
+		border-color: var(--color-amber);
 	}
 
 	.target-string.closest {
 		border-color: var(--color-amber);
 		background: var(--color-amber-dim);
-	}
-
-	.string-num {
-		font-size: 0.65rem;
-		color: var(--color-text-muted);
-		font-family: var(--font-mono);
 	}
 
 	.string-note-name {
@@ -361,5 +375,9 @@
 	.tuner-btn.active {
 		background: var(--color-walnut-light);
 		color: var(--color-cream);
+	}
+
+	.tuner-btn.active:hover {
+		background: var(--color-walnut);
 	}
 </style>
