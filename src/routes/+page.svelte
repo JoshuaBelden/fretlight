@@ -8,7 +8,7 @@
 	import ScaleSelector from '$lib/components/ScaleSelector.svelte';
 	import ChordSelector from '$lib/components/ChordSelector.svelte';
 	import IntervalTrainer from '$lib/components/IntervalTrainer.svelte';
-	import Metronome from '$lib/components/Metronome.svelte';
+
 	import Tuner from '$lib/components/Tuner.svelte';
 </script>
 
@@ -85,10 +85,6 @@
 			<Tuner />
 		</div>
 
-	{:else if displayState.activeView === 'metronome'}
-		<div class="tool-view">
-			<Metronome />
-		</div>
 	{/if}
 </div>
 

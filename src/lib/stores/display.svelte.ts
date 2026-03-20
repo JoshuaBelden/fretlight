@@ -1,6 +1,6 @@
 import type { DisplayMode, DisplaySelection } from '$lib/instruments/types.js';
 
-export type ActiveView = 'fretboard' | 'tuner' | 'metronome';
+export type ActiveView = 'fretboard' | 'tuner';
 
 class DisplayState {
 	mode = $state<DisplayMode>('all-notes');

@@ -2,11 +2,11 @@
 	import { displayState, type ActiveView } from '$lib/stores/display.svelte.js';
 	import { instrumentState, ALL_INSTRUMENTS } from '$lib/stores/instrument.svelte.js';
 	import Logo from './Logo.svelte';
+	import NavMetronome from './NavMetronome.svelte';
 
 	const tabs: { id: ActiveView; label: string }[] = [
 		{ id: 'fretboard', label: 'Fretboard' },
-		{ id: 'tuner', label: 'Tuner' },
-		{ id: 'metronome', label: 'Metronome' }
+		{ id: 'tuner', label: 'Tuner' }
 	];
 
 	let instrumentOpen = $state(false);
@@ -32,7 +32,7 @@
 
 <nav class="nav">
 	<div class="nav-brand">
-		<Logo width={200} />
+		<Logo width={140} />
 	</div>
 
 	<div class="instrument-picker">
@@ -66,6 +66,8 @@
 			</button>
 		{/each}
 	</div>
+
+	<NavMetronome />
 </nav>
 
 <style>
@@ -194,11 +196,25 @@
 	}
 
 	@media (max-width: 640px) {
+		.nav {
+			gap: var(--space-xs);
+			padding: 0 var(--space-xs);
+		}
+
+		.nav-brand {
+			margin-right: 0;
+		}
+
+		.nav-brand :global(.logo) {
+			width: 65px;
+		}
+
 		.nav-tab {
 			padding: var(--space-xs) var(--space-sm);
-			font-size: 0.8rem;
+			font-size: 0.75rem;
 		}
-		.instrument-label {
+
+		.instrument-picker {
 			display: none;
 		}
 	}
