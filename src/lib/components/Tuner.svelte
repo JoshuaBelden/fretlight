@@ -105,21 +105,20 @@
 
 	<!-- Main display -->
 	<div class="note-display">
-		{#if audioState.tunerDetectedNote}
-			<span class="detected-note" style="color: {tuneColor}">
-				{audioState.tunerDetectedNote}
-			</span>
-			<span class="detected-octave">{audioState.tunerDetectedOctave}</span>
-			{#if audioState.tunerDetectedFrequency}
-				<span class="detected-freq">
-					{audioState.tunerDetectedFrequency.toFixed(1)} Hz
-				</span>
+		<span class="detected-note" class:hidden={!audioState.tunerDetectedNote} style="color: {tuneColor}">
+			{audioState.tunerDetectedNote ?? 'A'}
+		</span>
+		<span class="detected-octave" class:hidden={!audioState.tunerDetectedNote}>
+			{audioState.tunerDetectedOctave ?? '4'}
+		</span>
+		<span class="detected-freq" class:hidden={!audioState.tunerDetectedNote || !audioState.tunerDetectedFrequency}>
+			{audioState.tunerDetectedFrequency?.toFixed(1) ?? '440.0'} Hz
+		</span>
+		<span class="waiting-overlay">
+			{#if !audioState.tunerDetectedNote}
+				{audioState.tunerIsActive ? 'Listening…' : '—'}
 			{/if}
-		{:else if audioState.tunerIsActive}
-			<span class="waiting">Listening…</span>
-		{:else}
-			<span class="waiting">—</span>
-		{/if}
+		</span>
 	</div>
 
 	<!-- Cents meter -->
@@ -140,11 +139,13 @@
 				></div>
 			{/if}
 		</div>
-		{#if audioState.tunerDetectedNote}
-			<p class="cents-label" style="color: {tuneColor}">
-				{audioState.tunerCentsDeviation > 0 ? '+' : ''}{audioState.tunerCentsDeviation} cents
-			</p>
-		{/if}
+			<p
+			class="cents-label"
+			class:hidden={!audioState.tunerDetectedNote}
+			style="color: {tuneColor}"
+		>
+			{audioState.tunerCentsDeviation > 0 ? '+' : ''}{audioState.tunerCentsDeviation} cents
+		</p>
 	</div>
 
 	<!-- Target strings for current tuning -->
@@ -198,12 +199,12 @@
 
 	/* Note display */
 	.note-display {
+		position: relative;
 		display: flex;
 		align-items: baseline;
 		justify-content: center;
 		gap: var(--space-sm);
 		padding: var(--space-xl) 0;
-		min-height: 100px;
 	}
 
 	.detected-note {
@@ -230,10 +231,16 @@
 		margin-bottom: 8px;
 	}
 
-	.waiting {
+	.waiting-overlay {
+		position: absolute;
+		inset: 0;
+		display: flex;
+		align-items: center;
+		justify-content: center;
 		font-family: var(--font-body);
 		font-size: 2rem;
 		color: var(--color-text-muted);
+		pointer-events: none;
 	}
 
 	/* Cents meter */
@@ -290,7 +297,11 @@
 	.cents-label {
 		font-family: var(--font-mono);
 		font-size: 0.8rem;
-		transition: color 0.15s;
+		transition: color 0.15s, opacity 0.15s;
+	}
+
+	.hidden {
+		visibility: hidden;
 	}
 
 	/* Target strings */

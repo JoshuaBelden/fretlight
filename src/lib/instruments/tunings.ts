@@ -6,7 +6,7 @@ import type { TuningPreset } from './types.js';
 
 export const GUITAR_STANDARD: TuningPreset = {
 	id: 'guitar-standard',
-	name: 'Standard (EADGBe)',
+	name: 'Standard',
 	instrumentId: 'guitar',
 	strings: [
 		{ stringNumber: 1, openNote: 'E4', startFret: 0 },
@@ -20,7 +20,7 @@ export const GUITAR_STANDARD: TuningPreset = {
 
 export const GUITAR_DROP_D: TuningPreset = {
 	id: 'guitar-drop-d',
-	name: 'Drop D (DADGBe)',
+	name: 'Drop D',
 	instrumentId: 'guitar',
 	strings: [
 		{ stringNumber: 1, openNote: 'E4', startFret: 0 },
@@ -48,7 +48,7 @@ export const GUITAR_DADGAD: TuningPreset = {
 
 export const GUITAR_OPEN_G: TuningPreset = {
 	id: 'guitar-open-g',
-	name: 'Open G (DGDGBd)',
+	name: 'Open G',
 	instrumentId: 'guitar',
 	strings: [
 		{ stringNumber: 1, openNote: 'D4', startFret: 0 },
@@ -62,7 +62,7 @@ export const GUITAR_OPEN_G: TuningPreset = {
 
 export const GUITAR_OPEN_E: TuningPreset = {
 	id: 'guitar-open-e',
-	name: 'Open E (EBE G#Be)',
+	name: 'Open E',
 	instrumentId: 'guitar',
 	strings: [
 		{ stringNumber: 1, openNote: 'E4', startFret: 0 },
@@ -84,7 +84,7 @@ export const GUITAR_OPEN_E: TuningPreset = {
 
 export const BANJO_OPEN_G: TuningPreset = {
 	id: 'banjo-open-g',
-	name: 'Open G (gDGBD)',
+	name: 'Open G',
 	instrumentId: 'banjo',
 	strings: [
 		{ stringNumber: 1, openNote: 'D4', startFret: 0 },
@@ -97,7 +97,7 @@ export const BANJO_OPEN_G: TuningPreset = {
 
 export const BANJO_OPEN_D: TuningPreset = {
 	id: 'banjo-open-d',
-	name: 'Open D (f#DF#AD)',
+	name: 'Open D',
 	instrumentId: 'banjo',
 	strings: [
 		{ stringNumber: 1, openNote: 'D4', startFret: 0 },
@@ -110,7 +110,7 @@ export const BANJO_OPEN_D: TuningPreset = {
 
 export const BANJO_DOUBLE_C: TuningPreset = {
 	id: 'banjo-double-c',
-	name: 'Double C (gCGCD)',
+	name: 'Double C',
 	instrumentId: 'banjo',
 	strings: [
 		{ stringNumber: 1, openNote: 'D4', startFret: 0 },
@@ -123,7 +123,7 @@ export const BANJO_DOUBLE_C: TuningPreset = {
 
 export const BANJO_SAWMILL: TuningPreset = {
 	id: 'banjo-sawmill',
-	name: 'Sawmill / Modal (gDGCD)',
+	name: 'Sawmill)',
 	instrumentId: 'banjo',
 	strings: [
 		{ stringNumber: 1, openNote: 'D4', startFret: 0 },
