@@ -65,6 +65,12 @@
 	--note-chord-text: var(--color-slate-deep);
 	--note-interval: #34d399;
 	--note-interval-text: #022c22;
+	--note-run-current: #f59e0b;
+	--note-run-current-text: #0f172a;
+	--note-run-upcoming: rgba(245, 158, 11, 0.35);
+	--note-run-upcoming-text: #f59e0b;
+	--note-run-note: rgba(148, 163, 184, 0.25);
+	--note-run-note-text: rgba(148, 163, 184, 0.5);
 	--note-inactive: rgba(148, 163, 184, 0.08);
 	--note-inactive-text: rgba(148, 163, 184, 0.35);
 

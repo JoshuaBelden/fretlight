@@ -17,13 +17,16 @@
 		onclick?: (pos: FretPosition) => void;
 	} = $props();
 
-	type RoleKey = 'root' | 'scale-tone' | 'chord-tone' | 'interval' | '';
+	type RoleKey = 'root' | 'scale-tone' | 'chord-tone' | 'interval' | 'run-current' | 'run-upcoming' | 'run-note' | '';
 
 	const ROLE_COLORS: Record<RoleKey, { fill: string; text: string }> = {
 		root: { fill: 'var(--note-root)', text: 'var(--note-root-text)' },
 		'scale-tone': { fill: 'var(--note-scale-tone)', text: 'var(--note-scale-text)' },
 		'chord-tone': { fill: 'var(--note-chord-tone)', text: 'var(--note-chord-text)' },
 		interval: { fill: 'var(--note-interval)', text: 'var(--note-interval-text)' },
+		'run-current': { fill: 'var(--note-run-current)', text: 'var(--note-run-current-text)' },
+		'run-upcoming': { fill: 'var(--note-run-upcoming)', text: 'var(--note-run-upcoming-text)' },
+		'run-note': { fill: 'var(--note-run-note)', text: 'var(--note-run-note-text)' },
 		'': { fill: 'var(--note-inactive)', text: 'var(--note-inactive-text)' }
 	};
 

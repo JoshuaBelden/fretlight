@@ -49,7 +49,7 @@ export interface FretPosition {
 	/** Text label to display on the note circle */
 	label: string;
 	/** Visual role for color coding */
-	role: 'root' | 'scale-tone' | 'chord-tone' | 'interval' | '';
+	role: 'root' | 'scale-tone' | 'chord-tone' | 'interval' | 'run-current' | 'run-upcoming' | 'run-note' | '';
 	/** True for frets before the capo (grayed out) */
 	dimmed: boolean;
 }

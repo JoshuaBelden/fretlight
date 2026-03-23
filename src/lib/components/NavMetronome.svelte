@@ -13,7 +13,7 @@
 	let tapTimeout: ReturnType<typeof setTimeout> | null = null;
 
 	async function togglePlay() {
-		if (metronome.isPlaying) {
+		if (metronome.isPlaying || audioState.metronomeIsPlaying) {
 			metronome.stop();
 			audioState.setMetronomePlaying(false);
 			audioState.setCurrentBeat(0);

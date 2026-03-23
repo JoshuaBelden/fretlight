@@ -2,6 +2,7 @@
 	import type { FretPosition, ResolvedPosition } from '$lib/instruments/types.js';
 	import { instrumentState } from '$lib/stores/instrument.svelte.js';
 	import { displayState } from '$lib/stores/display.svelte.js';
+	import { practiceState } from '$lib/stores/practice.svelte.js';
 	import { buildFretboardNotes, getActivePositions } from '$lib/music/fretboard.js';
 	import { resolveChordPositions } from '$lib/music/chord-shapes.js';
 	import FretboardString from './FretboardString.svelte';
@@ -91,6 +92,72 @@
 		getActivePositions(allPositions, displayState.mode, effectiveSelection)
 	);
 
+	// Practice overlay: show only notes in the run, highlight current + next
+	let displayPositions = $derived.by(() => {
+		if (!practiceState.isActive) {
+			return activePositions;
+		}
+
+		// Build a set of positions that appear in the run sequence
+		const runPositions = new Set<string>();
+		for (const pos of practiceState.runSequence) {
+			runPositions.add(`${pos.stringIndex}:${pos.fret}`);
+		}
+
+		const current = practiceState.currentPosition;
+		const next = practiceState.nextPosition;
+
+		return activePositions.map((stringPositions) =>
+			stringPositions.map((pos) => {
+				if (!pos) return null;
+				const key = `${pos.stringIndex}:${pos.fret}`;
+				const inRun = runPositions.has(key);
+				if (!inRun) {
+					return { ...pos, active: false, role: '', label: '' } as typeof pos;
+				}
+				const isCurrent =
+					current && pos.stringIndex === current.stringIndex && pos.fret === current.fret;
+				const isNext =
+					next && pos.stringIndex === next.stringIndex && pos.fret === next.fret;
+				return {
+					...pos,
+					active: true,
+					role: isCurrent ? 'run-current' : isNext ? 'run-upcoming' : 'run-note',
+					label: pos.note
+				} as typeof pos;
+			})
+		);
+	});
+
+	// Arrow between current and next practice note
+	let practiceArrow = $derived.by(() => {
+		if (!practiceState.isActive) return null;
+		const cur = practiceState.currentPosition;
+		const nxt = practiceState.nextPosition;
+		if (!cur || !nxt) return null;
+
+		const isRotated = displayState.fretboardRotated;
+		const cx = cur.fret === 0 ? LEFT_PAD / 2 : noteCenterX(cur.fret);
+		const cy = stringY(cur.stringIndex, isRotated);
+		const nx = nxt.fret === 0 ? LEFT_PAD / 2 : noteCenterX(nxt.fret);
+		const ny = stringY(nxt.stringIndex, isRotated);
+
+		// Shorten the line so it doesn't overlap the note circles
+		const dx = nx - cx;
+		const dy = ny - cy;
+		const dist = Math.sqrt(dx * dx + dy * dy);
+		if (dist < NOTE_RADIUS * 2.5) return null; // too close, skip arrow
+		const ux = dx / dist;
+		const uy = dy / dist;
+		const gap = NOTE_RADIUS + 3;
+		return {
+			x1: cx + ux * gap,
+			y1: cy + uy * gap,
+			x2: nx - ux * gap,
+			y2: ny - uy * gap
+		};
+	});
+
 	let fretNumbers = $derived(
 		[1, 3, 5, 7, 9, 12, 15, 17, 19, 21].filter(
 			(f) => f <= instrumentState.instrument.fretCount
@@ -136,6 +203,10 @@
 				</feComponentTransfer>
 				<feComposite in="SourceGraphic" operator="over" />
 			</filter>
+			<marker id="arrow-tip" viewBox="0 0 10 10" refX="8" refY="5"
+				markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+				<path d="M 0 1 L 8 5 L 0 9 z" fill="var(--note-run-current)" opacity="0.7" />
+			</marker>
 		</defs>
 
 		{#if rotated}
@@ -221,7 +292,7 @@
 			{#each instrumentState.tuning.strings as stringConfig, idx}
 				<FretboardString
 					{stringConfig}
-					positions={activePositions[idx] ?? []}
+					positions={displayPositions[idx] ?? []}
 					y={stringY(idx, true)}
 					strokeWidth={stringStrokeWidth(idx)}
 					nutX={LEFT_PAD}
@@ -234,6 +305,20 @@
 					rotated={true}
 				/>
 			{/each}
+
+			<!-- ── Practice arrow (rotated) ── -->
+			{#if practiceArrow}
+				<line
+					x1={practiceArrow.y1}
+					y1={practiceArrow.x1}
+					x2={practiceArrow.y2}
+					y2={practiceArrow.x2}
+					stroke="var(--note-run-current)"
+					stroke-width="2"
+					stroke-opacity="0.6"
+					marker-end="url(#arrow-tip)"
+				/>
+			{/if}
 
 		{:else}
 			<!-- ── Fretboard body ── -->
@@ -315,7 +400,7 @@
 			{#each instrumentState.tuning.strings as stringConfig, idx}
 				<FretboardString
 					{stringConfig}
-					positions={activePositions[idx] ?? []}
+					positions={displayPositions[idx] ?? []}
 					y={stringY(idx)}
 					strokeWidth={stringStrokeWidth(idx)}
 					nutX={LEFT_PAD}
@@ -327,6 +412,20 @@
 					onNoteClick={handleNoteClick}
 				/>
 			{/each}
+
+			<!-- ── Practice arrow ── -->
+			{#if practiceArrow}
+				<line
+					x1={practiceArrow.x1}
+					y1={practiceArrow.y1}
+					x2={practiceArrow.x2}
+					y2={practiceArrow.y2}
+					stroke="var(--note-run-current)"
+					stroke-width="2"
+					stroke-opacity="0.6"
+					marker-end="url(#arrow-tip)"
+				/>
+			{/if}
 		{/if}
 	</svg>
 </div>
