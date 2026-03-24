@@ -1,11 +1,7 @@
-<p align="center">
-  <img src="static/logo.png" alt="FretLight" width="220" />
-</p>
-
 <h1 align="center">FretLight</h1>
-<p align="center">A musical instrument trainer and theory app — warm Americana style, built for the fretboard.</p>
+<p align="center">A musical instrument trainer and theory app built for the fretboard.</p>
 
----
+![Screenshot](docs/screenshot.png)
 
 ## Features
 
